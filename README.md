@@ -3,8 +3,533 @@
 ---
 # 2026/05/20
 
-## 
+# 이벤트 기반 프로그래밍
 
+## 이벤트 기반 프로그램
+
+* 이벤트 발생에 의해 프로그램의 흐름이 결정되는 방식
+    * 이벤트가 발생하면 이를 처리하는 루틴(이벤트 리스너) 실행
+    * 실행될 코드는 이벤트 발생에 의해 결정됨
+
+* 반대 개념: 배치 실행(Batch Programming)
+    * 프로그램 개발자가 흐름을 직접 결정하는 방식
+
+## 이벤트 종류
+
+* 사용자 입력
+    * 마우스 클릭
+    * 마우스 드래그
+    * 키보드 입력
+
+* 시스템 및 외부 입력
+    * 센서 입력
+    * 네트워크 데이터 송수신
+    * 다른 응용 프로그램이나 다른 스레드로부터의 메시지
+
+## 이벤트 기반 응용 프로그램 구조
+
+* 각 이벤트마다 처리하는 리스너 코드 보유
+* GUI 응용 프로그램은 대부분 이벤트 기반으로 작성됨
+
+### 대표적인 GUI 프레임워크
+
+* C++ MFC
+* C# GUI
+* Visual Basic
+* X Window
+* Android
+* Java AWT / Swing
+
+---
+
+# 스윙(Swing)에서 이벤트 처리 과정
+
+1. 이벤트 발생
+2. 이벤트 객체 생성
+3. 이벤트 리스너 탐색
+4. 이벤트 리스너에 이벤트 객체 전달
+5. 이벤트 리스너 실행
+
+---
+
+# 이벤트 객체(Event Object)
+
+## 이벤트 객체란?
+
+* 발생한 이벤트에 대한 정보를 가진 객체
+* 이벤트 리스너에 전달됨
+* 리스너가 이벤트 상황을 파악할 수 있도록 도움
+
+## 이벤트 객체가 포함하는 정보
+
+* 이벤트 종류와 소스
+* 이벤트 발생 위치 좌표
+    * 화면 좌표
+    * 컴포넌트 내부 좌표
+* 버튼이나 메뉴 아이템의 문자열
+* 클릭된 마우스 버튼 번호
+* 마우스 클릭 횟수
+* 키 코드 값과 문자 값
+* 체크박스 / 라디오 버튼 등의 상태
+
+## 이벤트 소스를 알아내는 메소드
+
+```java
+Object getSource()
+```
+
+* 이벤트 발생 컴포넌트를 반환
+* Object 타입으로 반환되므로 형변환 후 사용
+
+예시:
+
+```java
+JButton b = (JButton)e.getSource();
+```
+
+---
+
+# 리스너 인터페이스(Listener Interface)
+
+## 이벤트 리스너란?
+
+* 이벤트를 처리하는 자바 프로그램 코드
+* 보통 클래스로 작성
+
+## 자바의 다양한 리스너 인터페이스
+
+### ActionListener
+
+* 버튼 클릭 이벤트 등을 처리
+
+```java
+interface ActionListener {
+
+    // Action 이벤트 발생 시 호출
+    public void actionPerformed(ActionEvent e);
+}
+```
+
+### MouseListener
+
+* 마우스 이벤트 처리
+
+```java
+interface MouseListener {
+
+    // 마우스 버튼이 눌리는 순간 호출
+    public void mousePressed(MouseEvent e);
+
+    // 눌린 버튼이 떼어지는 순간 호출
+    public void mouseReleased(MouseEvent e);
+
+    // 마우스를 클릭하는 순간 호출
+    public void mouseClicked(MouseEvent e);
+
+    // 마우스가 컴포넌트 위에 올라가는 순간 호출
+    public void mouseEntered(MouseEvent e);
+
+    // 마우스가 컴포넌트 밖으로 나가는 순간 호출
+    public void mouseExited(MouseEvent e);
+}
+```
+
+---
+
+# 이벤트 리스너 작성
+
+## 사용자의 이벤트 리스너 작성 방법
+
+* 자바의 리스너 인터페이스 구현(implements)
+* 인터페이스의 모든 추상 메소드 구현 필요
+
+---
+
+# 이벤트 리스너 작성 과정
+
+## 1. 이벤트와 리스너 선택
+
+예시: 버튼 클릭 처리
+
+* 이벤트: `ActionEvent`
+* 이벤트 리스너: `ActionListener`
+
+---
+
+## 2. 이벤트 리스너 클래스 작성
+
+```java
+import java.awt.event.*;
+import javax.swing.*;
+
+class MyActionListener implements ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+
+        JButton b = (JButton)e.getSource();
+
+        if(b.getText().equals("Action"))
+            b.setText("액션");
+        else
+            b.setText("Action");
+    }
+}
+```
+
+---
+
+## 3. 이벤트 리스너 등록
+
+* 이벤트를 처리할 컴포넌트에 리스너 등록
+
+```java
+component.addXXXListener(listener);
+```
+
+* `XXX` : 이벤트 이름
+* `listener` : 이벤트 리스너 객체
+
+예시:
+
+```java
+MyActionListener listener = new MyActionListener();
+
+btn.addActionListener(listener);
+```
+
+---
+
+# 이벤트 리스너 작성 방법 3가지
+
+## 1. 독립 클래스 작성
+
+* 리스너를 완전한 클래스로 작성
+* 여러 곳에서 재사용 가능
+* 재사용성이 높음
+
+---
+
+## 2. 내부 클래스 작성
+
+* 클래스 내부에 멤버처럼 작성
+* 특정 클래스 안에서만 사용하는 경우 적합
+
+예시 구조:
+
+```java
+class MyFrame extends JFrame {
+
+    class MyListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+}
+```
+
+---
+
+## 3. 익명 클래스 작성
+
+* 이름 없는 클래스로 작성
+* 클래스 선언과 객체 생성을 동시에 수행
+* 코드가 짧고 간단할 때 사용
+
+예시:
+
+```java
+btn.addActionListener(new ActionListener() {
+
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("버튼 클릭");
+    }
+});
+```
+
+---
+
+# 익명 클래스(Anonymous Class)
+
+## 특징
+
+* 클래스 이름이 없음
+* 선언과 동시에 객체 생성
+* 간단한 이벤트 처리에 적합
+* 코드 길이를 줄일 수 있음
+
+```java
+new ActionListener() {
+
+    public void actionPerformed(ActionEvent e) {
+
+    }
+}
+```# 2026/05/20
+
+# 이벤트 기반 프로그래밍
+
+## 이벤트 기반 프로그램
+
+* 이벤트 발생에 의해 프로그램의 흐름이 결정되는 방식
+  * 이벤트가 발생하면 이를 처리하는 루틴(이벤트 리스너) 실행
+  * 실행될 코드는 이벤트 발생에 의해 결정됨
+
+* 반대 개념: 배치 실행(Batch Programming)
+  * 프로그램 개발자가 흐름을 직접 결정하는 방식
+
+## 이벤트 종류
+
+* 사용자 입력
+  * 마우스 클릭
+  * 마우스 드래그
+  * 키보드 입력
+
+* 시스템 및 외부 입력
+  * 센서 입력
+  * 네트워크 데이터 송수신
+  * 다른 응용 프로그램이나 다른 스레드로부터의 메시지
+
+## 이벤트 기반 응용 프로그램 구조
+
+* 각 이벤트마다 처리하는 리스너 코드 보유
+* GUI 응용 프로그램은 대부분 이벤트 기반으로 작성됨
+
+### 대표적인 GUI 프레임워크
+
+* C++ MFC
+* C# GUI
+* Visual Basic
+* X Window
+* Android
+* Java AWT / Swing
+
+---
+
+# 스윙(Swing)에서 이벤트 처리 과정
+
+1. 이벤트 발생
+2. 이벤트 객체 생성
+3. 이벤트 리스너 탐색
+4. 이벤트 리스너에 이벤트 객체 전달
+5. 이벤트 리스너 실행
+
+---
+
+# 이벤트 객체(Event Object)
+
+## 이벤트 객체란?
+
+* 발생한 이벤트에 대한 정보를 가진 객체
+* 이벤트 리스너에 전달됨
+* 리스너가 이벤트 상황을 파악할 수 있도록 도움
+
+## 이벤트 객체가 포함하는 정보
+
+* 이벤트 종류와 소스
+* 이벤트 발생 위치 좌표
+  * 화면 좌표
+  * 컴포넌트 내부 좌표
+* 버튼이나 메뉴 아이템의 문자열
+* 클릭된 마우스 버튼 번호
+* 마우스 클릭 횟수
+* 키 코드 값과 문자 값
+* 체크박스 / 라디오 버튼 등의 상태
+
+## 이벤트 소스를 알아내는 메소드
+
+```java
+Object getSource()
+```
+
+* 이벤트 발생 컴포넌트를 반환
+* Object 타입으로 반환되므로 형변환 후 사용
+
+예시:
+
+```java
+JButton b = (JButton)e.getSource();
+```
+
+---
+
+# 리스너 인터페이스(Listener Interface)
+
+## 이벤트 리스너란?
+
+* 이벤트를 처리하는 자바 프로그램 코드
+* 보통 클래스로 작성
+
+## 자바의 다양한 리스너 인터페이스
+
+### ActionListener
+
+* 버튼 클릭 이벤트 등을 처리
+
+```java
+interface ActionListener {
+
+    // Action 이벤트 발생 시 호출
+    public void actionPerformed(ActionEvent e);
+}
+```
+
+### MouseListener
+
+* 마우스 이벤트 처리
+
+```java
+interface MouseListener {
+
+    // 마우스 버튼이 눌리는 순간 호출
+    public void mousePressed(MouseEvent e);
+
+    // 눌린 버튼이 떼어지는 순간 호출
+    public void mouseReleased(MouseEvent e);
+
+    // 마우스를 클릭하는 순간 호출
+    public void mouseClicked(MouseEvent e);
+
+    // 마우스가 컴포넌트 위에 올라가는 순간 호출
+    public void mouseEntered(MouseEvent e);
+
+    // 마우스가 컴포넌트 밖으로 나가는 순간 호출
+    public void mouseExited(MouseEvent e);
+}
+```
+
+---
+
+# 이벤트 리스너 작성
+
+## 사용자의 이벤트 리스너 작성 방법
+
+* 자바의 리스너 인터페이스 구현(implements)
+* 인터페이스의 모든 추상 메소드 구현 필요
+
+---
+
+# 이벤트 리스너 작성 과정
+
+## 1. 이벤트와 리스너 선택
+
+예시: 버튼 클릭 처리
+
+* 이벤트: `ActionEvent`
+* 이벤트 리스너: `ActionListener`
+
+---
+
+## 2. 이벤트 리스너 클래스 작성
+
+```java
+import java.awt.event.*;
+import javax.swing.*;
+
+class MyActionListener implements ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+
+        JButton b = (JButton)e.getSource();
+
+        if(b.getText().equals("Action"))
+            b.setText("액션");
+        else
+            b.setText("Action");
+    }
+}
+```
+
+---
+
+## 3. 이벤트 리스너 등록
+
+* 이벤트를 처리할 컴포넌트에 리스너 등록
+
+```java
+component.addXXXListener(listener);
+```
+
+* `XXX` : 이벤트 이름
+* `listener` : 이벤트 리스너 객체
+
+예시:
+
+```java
+MyActionListener listener = new MyActionListener();
+
+btn.addActionListener(listener);
+```
+
+---
+
+# 이벤트 리스너 작성 방법 3가지
+
+## 1. 독립 클래스 작성
+
+* 리스너를 완전한 클래스로 작성
+* 여러 곳에서 재사용 가능
+* 재사용성이 높음
+
+---
+
+## 2. 내부 클래스 작성
+
+* 클래스 내부에 멤버처럼 작성
+* 특정 클래스 안에서만 사용하는 경우 적합
+
+예시 구조:
+
+```java
+class MyFrame extends JFrame {
+
+    class MyListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+}
+```
+
+---
+
+## 3. 익명 클래스 작성
+
+* 이름 없는 클래스로 작성
+* 클래스 선언과 객체 생성을 동시에 수행
+* 코드가 짧고 간단할 때 사용
+
+예시:
+
+```java
+btn.addActionListener(new ActionListener() {
+
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("버튼 클릭");
+    }
+});
+```
+
+---
+
+# 익명 클래스(Anonymous Class)
+
+## 특징
+
+* 클래스 이름이 없음
+* 선언과 동시에 객체 생성
+* 간단한 이벤트 처리에 적합
+* 코드 길이를 줄일 수 있음
+
+```java
+new ActionListener() {
+
+    public void actionPerformed(ActionEvent e) {
+
+    }
+}
+```
 
 ---
 
