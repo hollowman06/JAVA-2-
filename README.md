@@ -1,6 +1,202 @@
 # JAVA2
 ## 202530120 이동건
 ---
+# 2026/05/27
+
+# 키 이벤트와 포커스
+
+## 키 입력 시 이벤트 발생
+* 키를 누르는 순간
+* 키를 떼는 순간
+* 누른 키를 떼는 순간(유니코드 키만 해당)
+
+## 키 이벤트를 받는 조건
+* 모든 컴포넌트가 키 이벤트를 받을 수 있는 것은 아님
+* 현재 포커스를 가진 컴포넌트가 키 이벤트를 독점
+
+## 포커스(Focus)
+* 컴포넌트나 응용 프로그램이 키 이벤트를 독점하는 권한
+
+### 컴포넌트에 포커스 설정
+```java
+component.requestFocus();
+```
+
+---
+
+# 키 리스너(Key Listener)
+
+## 키 리스너 구현
+* 응용 프로그램에서 KeyListener를 상속받아 리스너 구현
+
+## KeyListener의 3개 메소드
+* `keyPressed()`
+* `keyReleased()`
+* `keyTyped()`
+
+---
+
+# 유니코드 키와 KeyEvent 객체
+
+## 유니코드의 특징
+* 국제 산업 표준
+* 전 세계 문자를 컴퓨터에서 일관되게 표현하기 위한 코드 체계
+* 문자들에 대해서만 키 코드 값 정의
+
+## KeyEvent 객체
+* 입력된 키 정보를 가진 이벤트 객체
+* KeyEvent 객체의 메소드로 입력된 키 판별 가능
+
+## KeyEvent 메소드
+
+### `char KeyEvent.getKeyChar()`
+* 키의 유니코드 문자 값 리턴
+* 유니코드 문자 키인 경우에만 의미 있음
+* 입력된 키를 판별하기 위해 문자 값만 비교
+
+```java
+char ch = e.getKeyChar();
+```
+
+### `int KeyEvent.getKeyCode()`
+* 유니코드 키 포함
+* 모든 키에 대한 정수형 키 코드 리턴
+* 입력된 키를 판별하기 위해 가상 키 값과 비교해야 함
+* 가상 키 값은 `KeyEvent` 클래스에 상수로 선언
+
+```java
+int code = e.getKeyCode();
+```
+
+---
+
+# 어댑터 클래스(Adapter Class)
+
+## 이벤트 리스너 구현의 부담
+* 리스너의 추상 메소드를 모두 구현해야 하는 부담 존재
+* 예:
+    * 마우스가 눌리는 경우(`mousePressed()`)만 처리하고 싶어도
+    * 나머지 메소드도 모두 구현해야 함
+
+## 어댑터 클래스(Adapter)
+* 리스너의 모든 메소드를 단순 리턴하도록 만든 클래스
+* JDK에서 제공
+
+```java
+JLabel la;
+
+contentPane.addMouseListener(new MyMouseAdapter());
+
+class MyMouseAdapter extends MouseAdapter {
+    public void mousePressed(MouseEvent e) {
+        // 필요한 기능만 구현
+    }
+}
+```
+
+## 어댑터 클래스가 없는 경우
+* 추상 메소드가 하나뿐인 리스너는 어댑터 클래스 없음
+* 예:
+    * `ActionAdapter` 없음
+    * `ItemAdapter` 없음
+
+---
+
+# 마우스 이벤트와 마우스 리스너
+
+## MouseEvent
+* 사용자의 마우스 조작에 따라 발생하는 이벤트
+
+### 발생 상황
+* 컴포넌트 위로 올라올 때
+* 컴포넌트에서 내려갈 때
+* 마우스 버튼 눌릴 때
+* 눌린 버튼이 떼어질 때
+* 마우스로 클릭할 때
+* 마우스 드래그
+* 마우스 움직임
+
+---
+
+# 주요 마우스 이벤트 메소드
+
+## `mouseClicked()`
+* 마우스가 눌러진 위치에서 그대로 떼어질 때 호출
+
+## `mouseReleased()`
+* 눌러진 위치에서 그대로 떼어지든 아니든 항상 호출
+
+## `mouseDragged()`
+* 마우스가 드래그되는 동안 계속 여러 번 호출
+
+---
+
+# 마우스 이벤트 호출 순서
+
+## 마우스를 클릭한 경우
+```java
+mousePressed()
+mouseReleased()
+mouseClicked()
+```
+
+## 마우스를 드래그한 경우
+```java
+mousePressed()
+mouseDragged()
+mouseDragged()
+...
+mouseReleased()
+```
+
+---
+
+# 마우스 리스너 등록
+
+## 마우스 리스너 달기
+* 마우스 리스너는 컴포넌트에 등록
+
+```java
+component.addMouseListener(myMouseListener);
+```
+
+## 마우스 이동 및 드래그 처리
+* MouseMotionListener를 따로 등록해야 함
+
+```java
+component.addMouseMotionListener(myMouseListener);
+```
+
+---
+
+# 스윙 컴포넌트 활용
+
+# GUI 프로그래밍 방법
+
+## 컴포넌트 기반 GUI
+* 스윙 컴포넌트 사용
+* 컴포넌트 범위를 벗어나기 어려움
+
+## 그래픽 기반 GUI 프로그래밍
+* 개발자가 직접 그래픽으로 화면 구성
+* 독특한 GUI 제작 가능
+* GUI 처리 속도가 빨라 게임에서 자주 사용
+
+---
+
+# JComponent
+
+## JComponent 클래스
+* 스윙 컴포넌트의 멤버를 모두 상속받는 슈퍼 클래스
+* 추상 클래스
+
+## 역할
+* 스윙 컴포넌트들이 공통으로 사용하는 메소드와 상수 구현
+
+```java
+JComponent
+```
+---
 # 2026/05/20
 
 # 이벤트 기반 프로그래밍
